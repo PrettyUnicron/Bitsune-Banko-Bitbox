@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 @onready var b1Rad = $AllButtons/Button1/CollisionShape2D.shape.radius
 @onready var b2Rad = $AllButtons/Button2/CollisionShape2D.shape.radius
@@ -10,6 +10,10 @@ extends Node2D
 @export var BPM := 25
 var beat_interval := 0.5 # spawn every 0.5s
 var timer := 0.0
+var Score = 0
+var miss_Count = 0
+var good_Count = 0
+var perf_Count = 0
 
 
 func _ready() -> void:
@@ -65,13 +69,28 @@ func _on_allButtons_button_1() -> void:
 	
 	var button_pos = $AllButtons/Button1.global_position
 	var first_note = note_pool.get_first_note_in_lane(1)
+	
 	if first_note:
 		var note_pos = first_note.global_position
 		var distance = Globals._getDistance(button_pos, note_pos)
 		var overlap = Globals.getOverlap(b1Rad, noteRad, distance)
+		Score = Globals.ScoreSystem(overlap, Score)
+		_update_score_ui()
+		
+		
 		if overlap != 0.0: #!= 0.0
 			note_pool.return_to_pool(first_note)
 			#first_note.play_hit_animation()
+			
+		if overlap == 0.0:
+			miss_Count += 1	
+			_update_missHit_ui()
+		elif overlap == 100.0:
+			perf_Count += 1
+			_update_perfHit_ui()
+		else:
+			good_Count += 1
+			_update_goodHit_ui()
 	else:
 		print("No notes in lane 1")		
 	#var pos2 = $Note/CollisionShape2D.global_position
@@ -88,9 +107,20 @@ func _on_all_buttons_button_2() -> void:
 		var note_pos = first_note.global_position
 		var distance = Globals._getDistance(button_pos, note_pos)
 		var overlap = Globals.getOverlap(b1Rad, noteRad, distance)
-		print(overlap)
+		Score = Globals.ScoreSystem(overlap, Score)
+		_update_score_ui()
 		if overlap != 0.0: #!= 0.0
 			note_pool.return_to_pool(first_note)
+			
+		if overlap == 0.0:
+			miss_Count += 1	
+			_update_missHit_ui()
+		elif overlap == 100.0:
+			perf_Count += 1
+			_update_perfHit_ui()
+		else:
+			good_Count += 1
+			_update_goodHit_ui()
 	else:
 		print("No notes in lane 2")
 
@@ -103,9 +133,21 @@ func _on_all_buttons_button_3() -> void:
 		var note_pos = first_note.global_position
 		var distance = Globals._getDistance(button_pos, note_pos)
 		var overlap = Globals.getOverlap(b1Rad, noteRad, distance)
-		print(overlap)
+		Score = Globals.ScoreSystem(overlap, Score)
+		_update_score_ui()
 		if overlap != 0.0:
 			note_pool.return_to_pool(first_note)
+			
+			
+		if overlap == 0.0:
+			miss_Count += 1	
+			_update_missHit_ui()
+		elif overlap == 100.0:
+			perf_Count += 1
+			_update_perfHit_ui()
+		else:
+			good_Count += 1
+			_update_goodHit_ui()
 	else:
 		print("No notes in lane 3")
 
@@ -117,9 +159,21 @@ func _on_all_buttons_button_4() -> void:
 		var note_pos = first_note.global_position
 		var distance = Globals._getDistance(button_pos, note_pos)
 		var overlap = Globals.getOverlap(b1Rad, noteRad, distance)
-		print(overlap)
+		Score = Globals.ScoreSystem(overlap, Score)
+		_update_score_ui()
 		if overlap != 0.0:
 			note_pool.return_to_pool(first_note)
+			
+			
+		if overlap == 0.0:
+			miss_Count += 1	
+			_update_missHit_ui()
+		elif overlap == 100.0:
+			perf_Count += 1
+			_update_perfHit_ui()
+		else:
+			good_Count += 1
+			_update_goodHit_ui()
 	else:
 		print("No notes in lane 4")
 
@@ -142,3 +196,15 @@ func spawn_note(lane):
 
 func _on_music_player_finished() -> void:
 	SceneLoader.change_scene("res://Scenes/results.tscn")
+
+func _update_score_ui():
+	$ScoreLabel.text = "SCORE: %d" % Score
+	
+func _update_missHit_ui():
+	$missLabel.text = "MISS: %d" % miss_Count
+
+func _update_goodHit_ui():
+	$goodLabel.text = "GOOD: %d" % good_Count
+
+func _update_perfHit_ui():
+	$perfLabel.text = "PERFECT %d" % perf_Count

@@ -24,7 +24,7 @@ func activate(position: Vector2):
 	active = true
 	global_position = position
 	visible = true
-	sprite.scale = Vector2(0.38, 0.38)
+	sprite.scale = Vector2(0.25, 0.25)
 	sprite.modulate.a = 1.0
 	set_deferred("monitoring", true)  # enable collision detection again
 

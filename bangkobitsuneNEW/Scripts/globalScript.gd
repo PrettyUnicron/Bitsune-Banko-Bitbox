@@ -1,6 +1,8 @@
 extends Node
 
 
+var Percent
+var Score = 0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -19,6 +21,7 @@ func getOverlap(r1: float, r2: float, d: float) -> float:
 	#No overlap
 	if d >= r1 + r2:
 		print("No overlap", " MISS!")
+
 		return 0.0
 		
 	
@@ -30,13 +33,36 @@ func getOverlap(r1: float, r2: float, d: float) -> float:
 		print("Full overlap", " PERFECT!")
 		var smallerArea = PI * min(r1, r2) ** 2
 		var baseArea = PI * r1 ** 2
+
 		return (smallerArea / baseArea) * 100.0
 		
 	#Partial overlap
 	var part1 = r1**2 * acos((d**2 + r1**2 - r2**2) / (2 * d * r1))
 	var part2 = r2**2 * acos((d**2 + r2**2 - r1**2) / (2 * d * r2))
 	var part3 = 0.5 * sqrt((-d + r1 + r2) * (d + r1 - r2) * (d - r1 + r2) * (d + r1 + r2))
-	print("Partial overlap", " GREAT!")
+	print("Partial overlap", " GOOD!")
 	var overlapArea = part1 + part2 - part3
 	var baseArea = PI * r1 ** 2
+	Percent = (overlapArea / baseArea) * 100.0
+
 	return (overlapArea / baseArea) * 100.0
+	
+	
+func ScoreSystem(Percent, Score):
+	print(Percent)
+	if Percent == 0.0:
+		Score -= 3
+		return Score
+	elif Percent >= 1.0 && Percent <= 25.0:
+		Score += 2
+		return Score
+	elif Percent >= 26.0 && Percent <= 50.0:
+		Score += 5
+		return Score
+	elif Percent >= 51.0 && Percent <= 75.0:
+		Score += 8
+		return Score
+	elif Percent >= 76.0 && Percent <= 100.0:
+		Score += 10
+		return Score
+		
